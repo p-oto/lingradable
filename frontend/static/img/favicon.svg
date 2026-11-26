@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Фон: круг с градиентом -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#27ae60;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3498db;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="32" cy="32" r="30" fill="url(#bg)"/>
+  
+  <!-- Пингвин Tux (упрощённый) -->
+  <!-- Тело -->
+  <ellipse cx="32" cy="38" rx="12" ry="14" fill="#2c3e50"/>
+  
+  <!-- Живот -->
+  <ellipse cx="32" cy="40" rx="8" ry="10" fill="#ecf0f1"/>
+  
+  <!-- Голова -->
+  <circle cx="32" cy="22" r="10" fill="#2c3e50"/>
+  
+  <!-- Глаза -->
+  <circle cx="28" cy="20" r="2.5" fill="#ecf0f1"/>
+  <circle cx="36" cy="20" r="2.5" fill="#ecf0f1"/>
+  <circle cx="28" cy="20" r="1.2" fill="#2c3e50"/>
+  <circle cx="36" cy="20" r="1.2" fill="#2c3e50"/>
+  
+  <!-- Клюв -->
+  <ellipse cx="32" cy="24" rx="3" ry="2" fill="#f39c12"/>
+  
+  <!-- Лапы -->
+  <ellipse cx="26" cy="50" rx="3" ry="2" fill="#f39c12"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2" fill="#f39c12"/>
+  
+  <!-- Буква "L" (Lingradable) -->
+  <text x="32" y="42" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#27ae60" text-anchor="middle">L</text>
+</svg>

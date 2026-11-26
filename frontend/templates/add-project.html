@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Lingradable — Добавить проект</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="fab fa-linux"></i> Lingradable</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-list"></i> Каталог</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="add-project.html"><i class="fas fa-plus-circle"></i> Добавить проект</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1><i class="fas fa-rocket"></i> Продвижение своего проекта</h1>
+        
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Заполните все поля. Ваш проект будет проверен модератором. Обязательно укажите SHA256 хэш.
+        </div>
+
+        <div class="card">
+            <div class="card-header"><i class="fas fa-plus-circle"></i> Форма добавления проекта</div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-tag"></i> Название проекта</label>
+                        <input type="text" class="form-control" placeholder="Например: MyCustom Linux">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-layer-group"></i> Тип</label>
+                        <select class="form-select">
+                            <option>Дистрибутив</option>
+                            <option>Окружение рабочего стола (DE)</option>
+                            <option>Оконный менеджер (WM)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-align-left"></i> Описание</label>
+                        <textarea class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-link"></i> Ссылки на зеркала / GitHub</label>
+                        <input type="url" class="form-control" placeholder="https://github.com/...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-shield-alt"></i> SHA256 хэш файла (обязательно)</label>
+                        <input type="text" class="form-control" pattern="[a-fA-F0-9]{64}" maxlength="64" placeholder="64 шестнадцатеричных символа">
+                        <div class="form-text"><i class="fas fa-terminal"></i> Команда для Linux: <code>sha256sum файл.iso</code></div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-lg"><i class="fas fa-paper-plane"></i> Отправить на модерацию</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center">
+        <div class="container"><p><i class="fab fa-linux"></i> © 2026 Lingradable.</p></div>
+    </footer>
+</body>
+</html>

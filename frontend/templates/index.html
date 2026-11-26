@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lingradable — каталог дистрибутивов Linux, окружений рабочего стола и оконных менеджеров. Фильтры, теги, отзывы, комментарии, модерация и чат поддержки.">
+    <meta name="theme-color" content="#0a1a14">
+    <title>Lingradable — Каталог Linux</title>
+
+    <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+    <link rel="alternate icon" type="image/png" href="/static/img/favicon.png">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Дизайн-система -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <noscript>
+        <div style="position:fixed;inset:0;z-index:99999;background:#0a1a14;color:#eafff3;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;font-family:sans-serif;">
+            <div>
+                <h2 style="margin-bottom:12px;">Lingradable нужен JavaScript</h2>
+                <p style="opacity:.8;">Включи JavaScript в браузере, чтобы пользоваться каталогом, тегами, обучением и чатом поддержки.</p>
+            </div>
+        </div>
+    </noscript>
+
+    <!-- ========================================== -->
+    <!-- ЗАСТАВКА: только логотип, без пингвина     -->
+    <!-- ========================================== -->
+    <div id="intro-overlay" class="intro-overlay" role="dialog" aria-modal="true" aria-label="Приветствие Lingradable">
+        <div class="intro-content">
+            <img src="/static/img/tux-lingradable-logo.png" alt="Lingradable" class="intro-logo">
+            <div class="intro-actions" id="intro-actions"></div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- СЛОИ ФОНА                                  -->
+    <!-- ========================================== -->
+    <div class="bg-layer bg-skybox" aria-hidden="true"></div>
+    <div class="bg-layer bg-gif" aria-hidden="true"></div>
+    <div class="bg-layer bg-grass" aria-hidden="true"></div>
+
+    <!-- ========================================== -->
+    <!-- НАВИГАЦИЯ                                  -->
+    <!-- ========================================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark" aria-label="Основная навигация">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showPage('home'); return false;" aria-label="Lingradable — на главную">
+                <img src="/static/img/tux-lingradable-logo.png" alt="Lingradable" height="45">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+                    aria-controls="nav" aria-expanded="false" aria-label="Открыть меню">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('home'); return false;">
+                            <i class="fas fa-list" aria-hidden="true"></i> Каталог
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="goToAddProject(); return false;">
+                            <i class="fas fa-plus-circle" aria-hidden="true"></i> Добавить проект
+                        </a>
+                    </li>
+                    <!-- Видно только авторизованным (управляется access.js) -->
+                    <li class="nav-item" id="nav-add-tag" style="display:none;">
+                        <a class="nav-link" href="#" onclick="showPage('add-tag'); return false;">
+                            <i class="fas fa-tags" aria-hidden="true"></i> Добавить тэг
+                        </a>
+                    </li>
+                    <!-- Видно только модераторам/админам (управляется app.js) -->
+                    <li class="nav-item" id="nav-moderation" style="display:none;">
+                        <a class="nav-link" href="#" onclick="showPage('moderation'); return false;">
+                            <i class="fas fa-shield-alt" aria-hidden="true"></i> Модерация
+                            <span class="badge bg-danger" id="pending-count">0</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav" id="auth-buttons">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('login'); return false;">
+                            <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Войти
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('register'); return false;">
+                            <i class="fas fa-user-plus" aria-hidden="true"></i> Регистрация
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- ОСНОВНОЙ КОНТЕНТ                           -->
+    <!-- ========================================== -->
+    <main class="container my-4">
+
+        <!-- КАТАЛОГ -->
+        <div id="page-home" class="page">
+            <h1><i class="fas fa-database" aria-hidden="true"></i> Каталог дистрибутивов, DE и WM</h1>
+
+            <div class="card mb-4">
+                <div class="card-header"><i class="fas fa-filter" aria-hidden="true"></i> Фильтры</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" for="search-input"><i class="fas fa-search" aria-hidden="true"></i> Поиск</label>
+                        <input type="text" id="search-input" class="form-control" placeholder="Введите название или описание..." autocomplete="off">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" for="sort-select"><i class="fas fa-sort" aria-hidden="true"></i> Сортировка</label>
+                        <select id="sort-select" class="form-select">
+                            <option value="newest">Сначала новые</option>
+                            <option value="oldest">Сначала старые</option>
+                            <option value="rating">По рейтингу (высокий → низкий)</option>
+                            <option value="reviews">По количеству отзывов</option>
+                            <option value="comments">По количеству комментариев</option>
+                        </select>
+                    </div>
+
+                    <div class="fw-bold mb-2">Категории (можно выбрать несколько):</div>
+                    <div id="tags-filter" class="d-flex flex-wrap gap-2 mb-3"></div>
+
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                        <button id="custom-filter-btn" class="category-btn" type="button" onclick="toggleCustomFilter()">
+                            <i class="fas fa-user-cog" aria-hidden="true"></i> Кастомные проекты
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="resetFilters()">
+                            <i class="fas fa-times" aria-hidden="true"></i> Сбросить фильтры
+                        </button>
+                        <span id="filter-status" class="text-muted small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="products-list" class="row">
+                <div class="col-12 text-center">
+                    <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СТРАНИЦА ПРОДУКТА -->
+        <div id="page-product" class="page" style="display:none;">
+            <nav aria-label="Хлебные крошки">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" onclick="showPage('home'); return false;">Каталог</a></li>
+                    <li class="breadcrumb-item active" id="product-name" aria-current="page">Продукт</li>
+                </ol>
+            </nav>
+
+            <div id="product-detail">
+                <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="card h-100">
+                        <div class="card-header"><i class="fas fa-star" aria-hidden="true"></i> Отзывы</div>
+                        <div class="card-body">
+                            <div id="reviews-list"><p class="text-muted">Отзывов пока нет</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header"><i class="fas fa-comments" aria-hidden="true"></i> Комментарии</div>
+                        <div class="card-body">
+                            <div id="comments-list"><p class="text-muted">Комментариев пока нет</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ДОБАВИТЬ ПРОЕКТ -->
+        <div id="page-add" class="page" style="display:none;">
+            <h1><i class="fas fa-rocket" aria-hidden="true"></i> Продвижение своего проекта</h1>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                Заполни все поля. Проект будет проверен модератором. SHA256-хэш обязателен — он защищает пользователей от подмены файлов.
+            </div>
+
+            <div class="card">
+                <div class="card-header"><i class="fas fa-plus-circle" aria-hidden="true"></i> Форма добавления проекта</div>
+                <div class="card-body">
+                    <form id="add-project-form">
+                        <div class="mb-3">
+                            <label class="form-label" for="add-name"><i class="fas fa-tag" aria-hidden="true"></i> Название проекта</label>
+                            <input type="text" class="form-control" id="add-name" name="name" placeholder="Например: MyCustom Linux" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="add-type"><i class="fas fa-layer-group" aria-hidden="true"></i> Тип</label>
+                            <select class="form-select" id="add-type" name="type" required>
+                                <option value="distro">Дистрибутив</option>
+                                <option value="de">Окружение рабочего стола (DE)</option>
+                                <option value="wm">Оконный менеджер (WM)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="add-description"><i class="fas fa-align-left" aria-hidden="true"></i> Описание</label>
+                            <textarea class="form-control" id="add-description" name="description" rows="5" placeholder="Подробное описание..." required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="add-links"><i class="fas fa-link" aria-hidden="true"></i> Ссылки на зеркала / GitHub</label>
+                            <input type="url" class="form-control" id="add-links" name="links" placeholder="https://github.com/..." required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="add-sha"><i class="fas fa-shield-alt" aria-hidden="true"></i> SHA256 хэш файла (обязательно)</label>
+                            <input type="text" class="form-control" id="add-sha" name="sha256" pattern="[a-fA-F0-9]{64}" maxlength="64" placeholder="64 шестнадцатеричных символа" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <div id="logo-selector-container"></div>
+                            <input type="hidden" name="icon_url" id="icon-url-input">
+                        </div>
+
+                        <!-- Выбор существующих тегов (заполняется tags.js) -->
+                        <div class="mb-4" id="project-tags-container"></div>
+
+                        <div class="mb-3" id="project-type-selector" style="display:none;">
+                            <label class="form-label fw-bold"><i class="fas fa-tag" aria-hidden="true"></i> Тип проекта</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="project_type" id="type-official" value="official" checked>
+                                <label class="form-check-label" for="type-official">
+                                    <i class="fas fa-check-circle text-success" aria-hidden="true"></i> <strong>Официальный проект</strong>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="project_type" id="type-custom" value="custom">
+                                <label class="form-check-label" for="type-custom">
+                                    <i class="fas fa-user-cog text-warning" aria-hidden="true"></i> <strong>Кастомный проект</strong>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Отправить на модерацию
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ПРЕДЛОЖИТЬ ТЕГ (только для авторизованных) -->
+        <div id="page-add-tag" class="page" style="display:none;">
+            <h1><i class="fas fa-tags" aria-hidden="true"></i> Предложить новый тег</h1>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                Новые теги появляются в каталоге только после одобрения модератором. Придумай короткое и понятное название.
+            </div>
+
+            <div class="card">
+                <div class="card-header"><i class="fas fa-plus-circle" aria-hidden="true"></i> Форма предложения тега</div>
+                <div class="card-body">
+                    <form id="add-tag-form">
+                        <div class="mb-3">
+                            <label class="form-label" for="tag-name-input"><i class="fas fa-tag" aria-hidden="true"></i> Название тега</label>
+                            <input type="text" class="form-control" id="tag-name-input" name="tag_name" maxlength="100" placeholder="Например: для стриминга" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="tag-desc-input"><i class="fas fa-align-left" aria-hidden="true"></i> Описание (необязательно)</label>
+                            <textarea class="form-control" id="tag-desc-input" name="tag_description" rows="3" maxlength="500" placeholder="Что объединяет проекты с этим тегом..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Отправить на модерацию
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ВХОД -->
+        <div id="page-login" class="page" style="display:none;">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-header text-center"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> Вход в систему</div>
+                        <div class="card-body">
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label class="form-label" for="login-email"><i class="fas fa-envelope" aria-hidden="true"></i> Email</label>
+                                    <input type="email" class="form-control" id="login-email" name="email" autocomplete="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="login-password"><i class="fas fa-lock" aria-hidden="true"></i> Пароль</label>
+                                    <input type="password" class="form-control" id="login-password" name="password" autocomplete="current-password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i> Войти
+                                </button>
+                            </form>
+                            <div class="text-center mt-3">
+                                <p class="mb-0">Нет аккаунта? <a href="#" onclick="showPage('register'); return false;">Зарегистрироваться</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕГИСТРАЦИЯ -->
+        <div id="page-register" class="page" style="display:none;">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header text-center"><i class="fas fa-user-plus" aria-hidden="true"></i> Регистрация</div>
+                        <div class="card-body">
+                            <form id="register-form">
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-name"><i class="fas fa-user" aria-hidden="true"></i> Имя</label>
+                                    <input type="text" class="form-control" id="reg-name" name="name" autocomplete="username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-email"><i class="fas fa-envelope" aria-hidden="true"></i> Email</label>
+                                    <input type="email" class="form-control" id="reg-email" name="email" autocomplete="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-password"><i class="fas fa-lock" aria-hidden="true"></i> Пароль</label>
+                                    <input type="password" class="form-control" id="reg-password" name="password" minlength="6" autocomplete="new-password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-password-confirm"><i class="fas fa-lock" aria-hidden="true"></i> Подтверждение пароля</label>
+                                    <input type="password" class="form-control" id="reg-password-confirm" name="password_confirm" minlength="6" autocomplete="new-password" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-user-plus" aria-hidden="true"></i> Зарегистрироваться
+                                </button>
+                            </form>
+                            <div class="text-center mt-3">
+                                <p class="mb-0">Уже есть аккаунт? <a href="#" onclick="showPage('login'); return false;">Войти</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- МОДЕРАЦИЯ -->
+        <div id="page-moderation" class="page" style="display:none;">
+            <h1><i class="fas fa-shield-alt" aria-hidden="true"></i> Панель модерации</h1>
+
+            <ul class="nav nav-tabs mb-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" href="#" role="tab" onclick="showModerationTab('pending'); return false;">
+                        <i class="fas fa-clock" aria-hidden="true"></i> На модерации
+                        <span class="badge bg-danger" id="tab-pending-count">0</span>
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#" role="tab" onclick="showModerationTab('rejected'); return false;">
+                        <i class="fas fa-times-circle" aria-hidden="true"></i> Отклонённые
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="#" role="tab" onclick="showModerationTab('tags'); return false;">
+                        <i class="fas fa-tags" aria-hidden="true"></i> Предложения тегов
+                    </a>
+                </li>
+                <!-- Управление всеми тегами (модератор/админ) -->
+                <li class="nav-item" role="presentation" id="mod-tab-all-tags">
+                    <a class="nav-link" href="#" role="tab" id="mod-tab-all-tags-link" onclick="showModerationTab('all-tags'); return false;">
+                        <i class="fas fa-layer-group" aria-hidden="true"></i> Все теги
+                    </a>
+                </li>
+            </ul>
+
+            <div id="moderation-pending" class="moderation-tab">
+                <div id="pending-list">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
+                        <p class="mt-2">Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="moderation-rejected" class="moderation-tab" style="display:none;">
+                <div id="rejected-list">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status"><span class="visually-hidden">Загрузка...</span></div>
+                        <p class="mt-2">Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="moderation-tags" class="moderation-tab" style="display:none;">
+                <div id="tag-suggestions-list"></div>
+            </div>
+
+            <div id="moderation-all-tags" class="moderation-tab" style="display:none;">
+                <div id="all-tags-list"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- ПОДВАЛ И БЕГУЩАЯ СТРОКА                    -->
+    <!-- ========================================== -->
+    <footer class="text-center py-3 mt-5">
+        <div class="container">
+            <p><i class="fab fa-linux" aria-hidden="true"></i> © 2026 Lingradable. Каталог дистрибутивов Linux, DE и WM.</p>
+        </div>
+    </footer>
+
+    <div class="marquee-container" aria-hidden="true">
+        <span class="marquee-text">
+            +++ ДОБРО ПОЖАЛОВАТЬ В LINGRADABLE +++ SYSTEM STATUS: ONLINE +++ ЗАГРУЗКА ЛУЧШИХ ДИСТРИБУТИВОВ LINUX +++ BEST VIEWED IN 800x600 +++ UNDER CONSTRUCTION +++
+        </span>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- МОДАЛКА РЕДАКТИРОВАНИЯ ПРОЕКТА             -->
+    <!-- ========================================== -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+         aria-labelledby="editProductModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalTitle"><i class="fas fa-edit" aria-hidden="true"></i> Редактирование проекта</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-product-form">
+                        <input type="hidden" id="edit-product-id">
+
+                        <div class="mb-3">
+                            <label class="form-label" for="edit-name">Название</label>
+                            <input type="text" class="form-control" id="edit-name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="edit-type">Тип</label>
+                            <select class="form-select" id="edit-type" required>
+                                <option value="distro">Дистрибутив</option>
+                                <option value="de">Окружение рабочего стола (DE)</option>
+                                <option value="wm">Оконный менеджер (WM)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="edit-description">Описание</label>
+                            <textarea class="form-control" id="edit-description" rows="4" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="edit-links">Ссылки</label>
+                            <input type="url" class="form-control" id="edit-links" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-image" aria-hidden="true"></i> Логотип проекта</label>
+                            <div id="edit-logo-selector-container"></div>
+                            <input type="hidden" id="edit-icon-url">
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearEditLogoSelection()">
+                                    <i class="fas fa-trash" aria-hidden="true"></i> Убрать аватарку
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Скрыто для автора, видно модераторам (управляется access.js) -->
+                        <div class="mb-3" id="edit-project-type-block">
+                            <label class="form-label fw-bold"><i class="fas fa-tag" aria-hidden="true"></i> Тип проекта</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="edit-project-type" id="edit-type-official" value="official" checked>
+                                <label class="form-check-label" for="edit-type-official">
+                                    <i class="fas fa-check-circle text-success" aria-hidden="true"></i> <strong>Официальный проект</strong>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="edit-project-type" id="edit-type-custom" value="custom">
+                                <label class="form-check-label" for="edit-type-custom">
+                                    <i class="fas fa-user-cog text-warning" aria-hidden="true"></i> <strong>Кастомный проект</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" onclick="saveProductEdit()">Сохранить изменения</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ЧАТ ПОДДЕРЖКИ                              -->
+    <!-- ========================================== -->
+    <div id="support-modal" class="support-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="Чат поддержки">
+        <div class="support-modal-content">
+            <div class="support-modal-header">
+                <h3><i class="fas fa-headset" aria-hidden="true"></i> Поддержка Lingradable</h3>
+                <button class="support-close-x" type="button" onclick="closeSupportModal()" aria-label="Закрыть поддержку">&times;</button>
+            </div>
+
+            <div class="support-body">
+                <!-- Список обращений -->
+                <div id="support-tickets-list" class="support-section">
+                    <div class="support-list-head">
+                        <h4 id="support-list-title">Мои обращения</h4>
+                        <button id="support-new-ticket-btn" class="support-btn primary" type="button" onclick="showCreateTicketForm()">
+                            <i class="fas fa-plus" aria-hidden="true"></i> Новый вопрос
+                        </button>
+                    </div>
+                    <div id="tickets-container"></div>
+                    <div id="support-closed-box" style="display:none;">
+                        <h5 class="support-subhead"><i class="fas fa-archive" aria-hidden="true"></i> Закрытые</h5>
+                        <div id="support-closed-container"></div>
+                    </div>
+                </div>
+
+                <!-- Очередь модератора -->
+                <div id="moderator-panel" class="support-section" style="display:none;">
+                    <h4><i class="fas fa-inbox" aria-hidden="true"></i> Свободные вопросы
+                        <span id="support-queue-count" class="support-queue-badge">0</span>
+                    </h4>
+                    <div id="open-tickets-container"></div>
+                </div>
+
+                <!-- Создание вопроса -->
+                <div id="create-ticket-form" class="support-section" style="display:none;">
+                    <h4>Новый вопрос</h4>
+                    <p class="support-hint">Опиши проблему кратко — модератор подхватит её и ответит прямо в чате.</p>
+                    <input type="text" id="ticket-subject" class="support-input" maxlength="255" placeholder="Например: не загружается логотип проекта">
+                    <div class="support-form-actions">
+                        <button class="support-btn primary" type="button" onclick="createTicket()">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Создать
+                        </button>
+                        <button class="support-btn ghost" type="button" onclick="showTicketsList()">Отмена</button>
+                    </div>
+                </div>
+
+                <!-- Чат -->
+                <div id="support-chat" class="support-section support-chat-section" style="display:none;">
+                    <div class="chat-header">
+                        <button class="support-btn ghost" type="button" onclick="showTicketsList()" aria-label="Назад к списку">
+                            <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                        </button>
+                        <div class="chat-title">
+                            <span id="chat-ticket-subject"></span>
+                            <span class="chat-meta">
+                                <span id="chat-ticket-num"></span>
+                                <span id="chat-ticket-status" class="ticket-status"></span>
+                            </span>
+                        </div>
+                        <button id="close-ticket-btn" class="support-btn danger" type="button" onclick="closeTicket()" style="display:none;">
+                            <i class="fas fa-check" aria-hidden="true"></i> Закрыть
+                        </button>
+                    </div>
+
+                    <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+
+                    <div id="chat-closed-note" class="chat-closed-note" style="display:none;">
+                        <i class="fas fa-lock" aria-hidden="true"></i> Вопрос закрыт. Переписка сохранена в истории.
+                    </div>
+
+                    <div id="chat-input-row" class="chat-input">
+                        <input type="text" id="chat-message-input" class="support-input" maxlength="2000" placeholder="Введите сообщение… (Enter — отправить)">
+                        <button id="chat-send-btn" class="support-btn primary" type="button" onclick="sendMessage()" aria-label="Отправить сообщение">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ПИНГВИН-КОМПАНЬОН И УКАЗАТЕЛЬ ОБУЧЕНИЯ     -->
+    <!-- ========================================== -->
+    <div id="tux-companion" style="display:none;">
+        <div id="tux-character" title="Чат поддержки">
+            <img src="/static/img/TINY-TUX.svg" alt="Tux — помощник Lingradable">
+        </div>
+        <div id="tux-speech-bubble">
+            <div id="tux-speech-text" aria-live="polite"></div>
+            <div id="tux-speech-controls"></div>
+        </div>
+    </div>
+
+    <div id="tutorial-pointer" style="display:none;" aria-hidden="true">
+        <div class="pointer-ring"></div>
+        <div class="pointer-arrow"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- СКРИПТЫ                                    -->
+    <!-- ========================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/support.js"></script>
+    <script src="/static/js/tags.js"></script>
+    <script src="/static/js/access.js"></script>
+
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <!-- Падающая сакура -->
+    <script>
+    (function () {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) return;
+
+        function createSakura() {
+            const petal = document.createElement('div');
+            petal.className = 'sakura-petal';
+            petal.setAttribute('aria-hidden', 'true');
+
+            const size = Math.random() * 10 + 5;
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.left = (Math.random() * 100) + 'vw';
+            petal.style.animationDuration = (Math.random() * 5 + 8) + 's';
+            petal.style.opacity = (Math.random() * 0.5 + 0.3).toFixed(2);
+
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 13000);
+        }
+
+        setInterval(createSakura, 800);
+    })();
+    </script>
+</body>
+</html>
