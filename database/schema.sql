@@ -1,9 +1,8 @@
 -- ============================================================
--- АИС «Lingradable» — физическая структура базы данных
--- СУБД: PostgreSQL 15+
--- ============================================================
+-- АИС «Lingradable»
+-- PostgreSQL 15+ ============================================================
 
--- Удаление таблиц в обратном порядке (с учётом внешних ключей)
+-- Удаление существующих таблиц (в обратном порядке связей)
 DROP TABLE IF EXISTS support_messages CASCADE;
 DROP TABLE IF EXISTS support_tickets CASCADE;
 DROP TABLE IF EXISTS tag_suggestions CASCADE;
@@ -21,7 +20,7 @@ CREATE TABLE users (
     id                SERIAL PRIMARY KEY,
     login             VARCHAR(50)  NOT NULL UNIQUE,
     email             VARCHAR(100) NOT NULL UNIQUE,
-    password          VARCHAR(255) NOT NULL,  -- bcrypt хэш
+    password          VARCHAR(255) NOT NULL,
     role              VARCHAR(20)  NOT NULL DEFAULT 'user'
                         CHECK (role IN ('user', 'moderator', 'admin')),
     status            VARCHAR(20)  NOT NULL DEFAULT 'active'
@@ -32,7 +31,7 @@ CREATE TABLE users (
 );
 
 -- ============================================================
--- Таблица продуктов (дистрибутивы, DE, WM)
+-- Таблица продуктов
 -- ============================================================
 CREATE TABLE products (
     id                SERIAL PRIMARY KEY,
@@ -53,7 +52,7 @@ CREATE TABLE products (
 );
 
 -- ============================================================
--- Таблица тегов (справочник)
+-- Таблица тегов
 -- ============================================================
 CREATE TABLE tags (
     id          SERIAL PRIMARY KEY,
@@ -62,7 +61,7 @@ CREATE TABLE tags (
 );
 
 -- ============================================================
--- Связующая таблица «продукт – тег» (многие-ко-многим)
+-- Связующая таблица «продукт – тег»
 -- ============================================================
 CREATE TABLE product_tags (
     id         SERIAL PRIMARY KEY,
@@ -84,7 +83,7 @@ CREATE TABLE reviews (
 );
 
 -- ============================================================
--- Таблица комментариев (с поддержкой вложенности через parent_id)
+-- Таблица комментариев (с вложенностью через parent_id)
 -- ============================================================
 CREATE TABLE comments (
     id            SERIAL PRIMARY KEY,
@@ -96,7 +95,7 @@ CREATE TABLE comments (
 );
 
 -- ============================================================
--- Таблица предложений тегов (очередь модерации)
+-- Таблица предложений тегов
 -- ============================================================
 CREATE TABLE tag_suggestions (
     id              SERIAL PRIMARY KEY,
@@ -139,7 +138,7 @@ CREATE TABLE support_messages (
 );
 
 -- ============================================================
--- Индексы для ускорения типовых запросов
+-- Индексы
 -- ============================================================
 CREATE INDEX idx_products_status      ON products(status);
 CREATE INDEX idx_products_type        ON products(type);
